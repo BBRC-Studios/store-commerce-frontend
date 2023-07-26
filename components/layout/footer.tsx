@@ -1,6 +1,5 @@
 import Link from 'next/link';
 
-import GitHubIcon from 'components/icons/github';
 import FooterMenu from 'components/layout/footer-menu';
 import LogoSquare from 'components/logo-square';
 import { getMenu } from 'lib/shopify';
@@ -38,16 +37,6 @@ export default async function Footer() {
         >
           <FooterMenu menu={menu} />
         </Suspense>
-        <div className="md:ml-auto">
-          <a
-            className="flex items-center gap-2 hover:text-black dark:hover:text-neutral-300"
-            aria-label="Github Repository"
-            href="https://github.com/vercel/commerce"
-          >
-            <GitHubIcon className="h-6" />
-            <p>Source</p>
-          </a>
-        </div>
       </div>
       <div className="border-t border-neutral-200 py-6 text-sm dark:border-neutral-700">
         <div className="mx-auto flex w-full max-w-7xl flex-col items-center gap-1 md:flex-row md:gap-0">
@@ -56,13 +45,7 @@ export default async function Footer() {
             {copyrightName.length && !copyrightName.endsWith('.') ? '.' : ''} All rights reserved.
           </p>
           <hr className="mx-4 hidden h-4 w-[1px] border-l border-neutral-400 md:inline-block" />
-          <p>Designed in California</p>
-          <p className="md:ml-auto">
-            Crafted by{' '}
-            <a href="https://vercel.com" className="text-black dark:text-white">
-              ▲ Vercel
-            </a>
-          </p>
+          <p>Designed in Singapore</p>
         </div>
       </div>
     </footer>
