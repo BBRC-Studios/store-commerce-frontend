@@ -1,4 +1,5 @@
 import { GridTileImage } from 'components/grid/tile';
+import { ProductCard } from 'components/product-card';
 import { getCollectionProducts } from 'lib/shopify';
 import type { Product } from 'lib/shopify/types';
 import Link from 'next/link';
@@ -34,10 +35,13 @@ export async function ThreeItemGrid() {
   });
 
   return (
-    <section className="mx-auto grid max-w-screen-2xl gap-4 px-4 pb-4 lg:grid-cols-6 lg:grid-rows-2">
+    <section className="mx-auto grid max-w-screen-2xl gap-4 px-4 pb-4 lg:grid-cols-4 lg:grid-rows-2">
+      {homepageItems[0] && <ProductCard product={homepageItems[0]} />}
+      {/*
       {homepageItems[0] && <ThreeItemGridItem size="full" item={homepageItems[0]} />}
       {homepageItems[1] && <ThreeItemGridItem size="half" item={homepageItems[1]} />}
       {homepageItems[2] && <ThreeItemGridItem size="half" item={homepageItems[2]} />}
+      */}
     </section>
   );
 }
