@@ -2,7 +2,12 @@ const plugin = require('tailwindcss/plugin');
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ['./app/**/*.{js,ts,jsx,tsx}', './components/**/*.{js,ts,jsx,tsx}'],
+  darkMode: 'class',
+  content: [
+    './app/**/*.{js,ts,jsx,tsx}',
+    './components/**/*.{js,ts,jsx,tsx}',
+    './node_modules/flowbite-react/**/*.js'
+  ],
   theme: {
     extend: {
       fontFamily: {
@@ -34,6 +39,7 @@ module.exports = {
     hoverOnlyWhenSupported: true
   },
   plugins: [
+    require('flowbite/plugin'),
     require('@tailwindcss/container-queries'),
     require('@tailwindcss/typography'),
     plugin(({ matchUtilities, theme }) => {

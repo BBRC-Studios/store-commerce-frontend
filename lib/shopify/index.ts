@@ -46,7 +46,7 @@ import {
   ShopifyUpdateCartOperation
 } from './types';
 
-const domain = `https://${process.env.SHOPIFY_STORE_DOMAIN!}`;
+const domain = `https://${process.env.SHOPIFY_STORE_DOMAIN}`;
 const endpoint = `${domain}${SHOPIFY_GRAPHQL_API_ENDPOINT}`;
 const key = process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN!;
 
@@ -65,6 +65,10 @@ export async function shopifyFetch<T>({
   tags?: string[];
   variables?: ExtractVariables<T>;
 }): Promise<{ status: number; body: T } | never> {
+  if (process.env.SHOPIFY_STORE_DOMAIN === undefined) {
+    throw Error('Shopify store domain not defined');
+  }
+
   try {
     const result = await fetch(endpoint, {
       method: 'POST',

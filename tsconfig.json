@@ -15,6 +15,8 @@
     "jsx": "preserve",
     "baseUrl": ".",
     "paths": {
+      "@pages/*": ["./pages/*"],
+      "@components/*": ["./components/*"],
       "@models/*": ["./assets/models/*"]
     },
     "plugins": [
@@ -25,6 +27,12 @@
     "incremental": true,
     "downlevelIteration": true
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "app/product/[handle]/page.tsx.save"
+  ],
   "exclude": ["node_modules"]
 }

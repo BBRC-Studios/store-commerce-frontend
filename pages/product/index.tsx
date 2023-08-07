@@ -1,8 +1,9 @@
+'use client';
+
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { Suspense } from 'react';
 
-import ProductTabs from '@components/product/tabs';
 import { GridTileImage } from 'components/grid/tile';
 import Footer from 'components/layout/footer';
 import { ProductDescription } from 'components/product/product-description';
@@ -86,7 +87,14 @@ export default async function ProductPage({ params }: { params: { handle: string
           <div className="grid grid-cols-2">
             <div className="">
               <div className="mb-4 border-b border-gray-200 dark:border-gray-700">
-                <ProductTabs product={product} />
+                {/*
+                <Tabs.Group>
+                  <Tabs.Item title="Gallery">
+                  </Tabs.Item>
+                  <Tabs.Item title="Model">
+                  </Tabs.Item>
+                </Tabs.Group>
+      */}
               </div>
             </div>
 
