@@ -32,7 +32,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "app/product/[handle]/page.tsx.save"
+    "app/product/[handle]/page.tsx"
   ],
   "exclude": ["node_modules"]
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { OrbitControls, Plane } from '@react-three/drei';
+import { Center, OrbitControls, Plane } from '@react-three/drei';
 import { useEffect, useState } from 'react';
 import ModelBody from '../../../assets/models/Body';
 
@@ -11,6 +11,7 @@ type ItemModel = {
 
 export default function WardrobeContent() {
   const [itemModels, setItemModels] = useState<ItemModel[]>([]);
+  const [enabled, setEnabled] = useState(false);
 
   useEffect(() => {
     const populateItems = async () => {
@@ -55,7 +56,7 @@ export default function WardrobeContent() {
   }, []);
 
   return (
-    <>
+    <Center onCentered={() => setEnabled(true)}>
       <color attach="background" args={['white']} />
       <OrbitControls
         makeDefault
@@ -71,10 +72,10 @@ export default function WardrobeContent() {
       <directionalLight intensity={7.5} position={[0, 400, -1000]} castShadow />
 
       {itemModels.map((Item) => {
-        return <Item.Model key={Item.id} position-y={-180} castShadow visible={true} />;
+        return <Item.Model key={Item.id} position-y={-180} castShadow visible={enabled} />;
       })}
 
-      <ModelBody position-y={-180} position-x={0} castShadow />
+      <ModelBody position-y={-180} position-x={0} castShadow visible={enabled} />
 
       <Plane
         args={[1000, 1000]}
@@ -84,6 +85,6 @@ export default function WardrobeContent() {
       >
         <meshStandardMaterial color="white" />
       </Plane>
-    </>
+    </Center>
   );
 }

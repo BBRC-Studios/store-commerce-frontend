@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Example</title>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
+    />
+    <link type="text/css" rel="stylesheet" href="main.css" />
+  </head>
+
+  <body>
+    <!-- Import maps polyfill -->
+    <!-- Remove this when import maps will be widely supported -->
+    <script async src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script>
+
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "./build/three.module.js",
+          "three/addons/": "./jsm/"
+        }
+      }
+    </script>
+
+    <script type="module">
+      import * as THREE from 'three';
+      import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
+      import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+      import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+      import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';
+
+      let camera, scene, renderer;
+      let isInitialised = false;
+
+      function animate() {
+        render();
+        requestAnimationFrame(animate);
+      }
+
+      function render() {
+        if (!isInitialised) return;
+        renderer.render(scene, camera);
+      }
+
+      function onWindowResize() {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+
+        animate();
+      }
+
+      function addLightToScene() {
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+        directionalLight.castShadow = true;
+        directionalLight.shadow.camera.top = 4;
+        directionalLight.shadow.camera.bottom = -4;
+        directionalLight.shadow.camera.left = -4;
+        directionalLight.shadow.camera.right = 4;
+        directionalLight.shadow.camera.near = 0.1;
+        directionalLight.shadow.camera.far = 40;
+        directionalLight.shadow.camera.far = 40;
+        directionalLight.shadow.bias = -0.002;
+        directionalLight.position.set(0, 20, 0);
+
+        scene.add(directionalLight);
+      }
+
+      function addRunwayToScene() {
+        const geometry = new THREE.PlaneGeometry(100, 100);
+        const material = new THREE.MeshStandardMaterial({
+          color: 0xffffff,
+          side: THREE.DoubleSide
+        });
+        const plane = new THREE.Mesh(geometry, material);
+        plane.rotateX(Math.PI / 2);
+        plane.translateZ(1.56);
+        plane.castShadow = true;
+        plane.receiveShadow = true;
+
+        scene.add(plane);
+      }
+
+      function addTestToScene() {
+        const sphereGeometry = new THREE.SphereGeometry(0.5, 32, 32);
+        const sphereMaterial = new THREE.MeshStandardMaterial({ color: 0xdddddd });
+        const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+        sphere.castShadow = true; //default is false
+        sphere.receiveShadow = true; //default
+
+        scene.add(sphere);
+      }
+
+      async function loadModels() {
+        const items = [
+          'Male_Hair_1_1.glb',
+          'Male_RugbyPoloShirt_PinkGreen.glb',
+          'Male_Loafers_Redsocks.glb',
+          // "Male_Jeans_Denim_Blue.glb",
+          'Male_Pants_WhiteGray.glb',
+          // "Male_LeatherVarsityJacket_Blue.glb ",
+          'Body.glb'
+        ];
+
+        // Configure and create Draco decoder.
+        const dracoLoader = new DRACOLoader();
+        dracoLoader.setDecoderPath('jsm/libs/draco/');
+        dracoLoader.setDecoderConfig({ type: 'js' });
+
+        const group = new THREE.Group();
+        const loader = new GLTFLoader().setPath('../glb/');
+        loader.setDRACOLoader(dracoLoader);
+
+        addRunwayToScene();
+        // addTestToScene();
+        addLightToScene();
+
+        const promises = Promise.all(
+          items.map((item) => {
+            return new Promise((resolve, reject) => {
+              loader.load(
+                item,
+                (gltf) => {
+                  gltf.scene.traverse(function (node) {
+                    if (node.isMesh) {
+                      node.castShadow = true;
+                      node.geometry.computeVertexNormals(); // FIX
+                    }
+                  });
+                  group.add(gltf.scene);
+                  resolve();
+                },
+                (xhr) => {
+                  //console.log(xhr)
+                },
+                (error) => console.log(error)
+              );
+            });
+          })
+        );
+
+        await promises.then(() => {
+          scene.add(group);
+          group.translateY(-1.5);
+
+          animate();
+        });
+      }
+
+      async function init() {
+        const container = document.createElement('div');
+        document.body.appendChild(container);
+
+        camera = new THREE.PerspectiveCamera(22, window.innerWidth / window.innerHeight, 2, 40);
+        camera.position.set(50, 0, 700);
+
+        renderer = new THREE.WebGLRenderer({
+          antialias: true
+        });
+
+        scene = new THREE.Scene();
+
+        const rgbeLoader = new RGBELoader();
+        const envMap = await rgbeLoader.loadAsync(
+          'textures/equirectangular/studio_small_09_4k.hdr'
+        );
+        envMap.mapping = THREE.EquirectangularReflectionMapping;
+
+        scene.background = envMap;
+        scene.environment = envMap;
+        scene.backgroundBlurriness = 0.7;
+
+        await loadModels();
+
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.setSize(window.innerWidth, window.innerHeight);
+
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        // renderer.outputEncoding = THREE.sRGBEncoding;
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+        container.appendChild(renderer.domElement);
+
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.addEventListener('change', render); // use if there is no animation loop
+        controls.minDistance = 5;
+        controls.maxDistance = 10;
+        controls.target.set(0, 0, -0.2);
+        controls.minPolarAngle = Math.PI / 2;
+        controls.maxPolarAngle = Math.PI / 2;
+        controls.update();
+
+        window.addEventListener('resize', onWindowResize);
+
+        isInitialised = true;
+      }
+
+      init();
+    </script>
+  </body>
+</html>
