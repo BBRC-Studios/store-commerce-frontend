@@ -8,9 +8,6 @@
       content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
     />
     <link type="text/css" rel="stylesheet" href="main.css" />
-  </head>
-
-  <body>
     <!-- Import maps polyfill -->
     <!-- Remove this when import maps will be widely supported -->
     <script async src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script>
@@ -23,7 +20,9 @@
         }
       }
     </script>
+  </head>
 
+  <body>
     <script type="module">
       import * as THREE from 'three';
       import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
@@ -33,6 +32,11 @@
 
       let camera, scene, renderer;
       let isInitialised = false;
+
+			function showStats(){
+				// Show fps
+				var script=document.createElement('script');script.onload=function(){var stats=new Stats();document.body.appendChild(stats.dom);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='https://mrdoob.github.io/stats.js/build/stats.min.js';document.head.appendChild(script);
+			}
 
       function animate() {
         render();
@@ -157,7 +161,7 @@
         camera.position.set(50, 0, 700);
 
         renderer = new THREE.WebGLRenderer({
-          antialias: true
+          antialias: false
         });
 
         scene = new THREE.Scene();
@@ -174,7 +178,7 @@
 
         await loadModels();
 
-        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.setPixelRatio(window.devicePixelRatio * 0.8);
         renderer.setSize(window.innerWidth, window.innerHeight);
 
         renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -199,6 +203,11 @@
       }
 
       init();
+
+			const searchParams = new URLSearchParams(window.location.search);
+			if(searchParams.get('debug') === 'true') {
+				showStats();
+			}
     </script>
   </body>
 </html>
