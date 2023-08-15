@@ -22,19 +22,7 @@ export default function ProductTabs({ product }: Props) {
           }))}
         />
       </Tabs.Item>
-      <Tabs.Item title="3D View">
-        <div
-          className="item-center flex justify-center text-center"
-          style={{ height: '450px', width: '100%' }}
-        >
-          <img
-            className="flex"
-            style={{ height: '100%', width: '450px' }}
-            src="/images/Male_LeatherVarsityJacket_Blue.webp"
-          />
-        </div>
-      </Tabs.Item>
-      <Tabs.Item title="Model">
+      <Tabs.Item title="View in 3D">
         <Suspense fallback={<Loading />}>
           <Wardrobe product={product} />
         </Suspense>

@@ -1,16 +1,14 @@
+import { Product } from 'lib/shopify/types';
 import Iframe from 'react-iframe';
-/*
-import dynamic from 'next/dynamic';
-
-const Wardrobe = dynamic(() => import('@components/product/wardrobe/wardrobe'), { ssr: false });
-
-export default Wardrobe;
-*/
-
-export default function Wardrobe() {
+export default function Wardrobe({
+  product
+}: {
+  product: Product
+}) {
+  console.log(product)
   return (
     <Iframe
-      url="/modelviewer/index.html"
+      url="/static/viewer/index.html?wardrobeItems=Male_RugbyPoloShirt_PinkGreen"
       width="100%"
       height="450px"
       id=""

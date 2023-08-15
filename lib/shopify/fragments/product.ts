@@ -24,6 +24,18 @@ const productFragment = /* GraphQL */ `
         currencyCode
       }
     }
+    modelviewerSlug: metafield(
+        namespace: "modelviewer"
+        key: "slug"
+    ) {
+      value
+    }
+    modelviewerCategory: metafield(
+        namespace: "modelviewer"
+        key: "category"
+    ) {
+      value
+    }
     variants(first: 250) {
       edges {
         node {

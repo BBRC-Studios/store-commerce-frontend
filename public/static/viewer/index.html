@@ -32,6 +32,51 @@
 
       let camera, scene, renderer;
       let isInitialised = false;
+      let items = [
+        'Body'
+      ];
+      let wardrobeItems = [];
+      const meshes = {};
+
+      function initialiseListeners() {
+        window.addEventListener(
+          "message",
+          (event) => {
+            if (event.data.type === 'toggle-visibility'){
+              console.log(event)
+              Object.keys(event.data.visibility).forEach((slug) => {
+                meshes[slug].visible = event.data.visibility[slug];
+              })
+              render();
+            }
+          },
+          false,
+        );
+      }
+
+      async function initialiseFromSearchParams() {
+        const searchParams = new URLSearchParams(window.location.search);
+
+        // Gets the wardrobe items
+        wardrobeItems = searchParams.get('wardrobeItems')?.split(',') || [];
+
+        const baseItems = [
+          'Male_Hair_1_1',
+          'Male_Loafers_Redsocks',
+          'Male_Pants_WhiteGray',
+        ];
+
+        baseItems.forEach(item => {
+          items.push(item);
+        })
+        wardrobeItems.forEach(item => {
+          items.push(item);
+        })
+
+        if(searchParams.get('debug') === 'true') {
+          showStats();
+        }
+      }
 
 			function showStats(){
 				// Show fps
@@ -87,45 +132,24 @@
         scene.add(plane);
       }
 
-      function addTestToScene() {
-        const sphereGeometry = new THREE.SphereGeometry(0.5, 32, 32);
-        const sphereMaterial = new THREE.MeshStandardMaterial({ color: 0xdddddd });
-        const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
-        sphere.castShadow = true; //default is false
-        sphere.receiveShadow = true; //default
-
-        scene.add(sphere);
-      }
-
       async function loadModels() {
-        const items = [
-          'Male_Hair_1_1.glb',
-          'Male_RugbyPoloShirt_PinkGreen.glb',
-          'Male_Loafers_Redsocks.glb',
-          // "Male_Jeans_Denim_Blue.glb",
-          'Male_Pants_WhiteGray.glb',
-          // "Male_LeatherVarsityJacket_Blue.glb ",
-          'Body.glb'
-        ];
-
         // Configure and create Draco decoder.
         const dracoLoader = new DRACOLoader();
         dracoLoader.setDecoderPath('jsm/libs/draco/');
         dracoLoader.setDecoderConfig({ type: 'js' });
 
         const group = new THREE.Group();
-        const loader = new GLTFLoader().setPath('../glb/');
+        const loader = new GLTFLoader().setPath('../../glb/');
         loader.setDRACOLoader(dracoLoader);
 
         addRunwayToScene();
-        // addTestToScene();
         addLightToScene();
 
         const promises = Promise.all(
           items.map((item) => {
             return new Promise((resolve, reject) => {
               loader.load(
-                item,
+                `${item}.glb`,
                 (gltf) => {
                   gltf.scene.traverse(function (node) {
                     if (node.isMesh) {
@@ -133,7 +157,11 @@
                       node.geometry.computeVertexNormals(); // FIX
                     }
                   });
-                  group.add(gltf.scene);
+                  meshes[item] = gltf.scene;
+                  if (wardrobeItems.includes(item)) {
+                    meshes[item].visible = false;
+                  }
+                  group.add(meshes[item]);
                   resolve();
                 },
                 (xhr) => {
@@ -154,6 +182,9 @@
       }
 
       async function init() {
+        await initialiseFromSearchParams();
+        initialiseListeners();
+
         const container = document.createElement('div');
         document.body.appendChild(container);
 
@@ -203,11 +234,6 @@
       }
 
       init();
-
-			const searchParams = new URLSearchParams(window.location.search);
-			if(searchParams.get('debug') === 'true') {
-				showStats();
-			}
     </script>
   </body>
 </html>
