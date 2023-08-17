@@ -3,6 +3,7 @@
 import { Product } from 'lib/shopify/types';
 import _ from "lodash";
 import { useEffect, useState } from 'react';
+import AddToCartModal from './add-to-cart-modal';
 import ProductItem from './product-item';
 
 export const runtime = 'edge';
@@ -25,8 +26,21 @@ export default function ProductItems({
   const categorisedProducts = _.groupBy(products, (product: Product) => {
     return product.category
   });
-
+  
   const [selectedItems, setSelectedItems] = useState(defaultSelectedItems);
+  const [selectedProducts, setSelectedProducts] = useState<Product[]>([]);
+  const [addingToCart, setAddingToCart] = useState(false);
+  const [openModal, setOpenModal] = useState<boolean>(false);
+
+  const toggleAddToCartModal = () => {
+    setAddingToCart(true);
+
+    setSelectedProducts(products.filter(product => {
+      return selectedItems[product.modelviewerSlug?.value!]
+    }))
+
+    setOpenModal(true);
+  }
 
   const updateSelected = (product: Product) => {
     if (product.modelviewerSlug?.value) {
@@ -56,7 +70,8 @@ export default function ProductItems({
     }, '*');
   }, [selectedItems])
   
-  return <div className="flex flex-col">
+  return <div className="flex flex-col h-full justify-between">
+    <div className="flex">
     {
       Object.keys(categorisedProducts).map(category => {
         return <div key={category}>
@@ -78,5 +93,28 @@ export default function ProductItems({
         </div>
       })
     }
+    </div>
+    <div className="flex flex-col">
+      <button 
+        onClick={toggleAddToCartModal}
+        className="flex flex-row rounded-full w-full py-3 bg-sky-800 hover:bg-sky-900 text-white fontsize-lg tracking-wider font-semibold justify-center"
+      >
+        <div className="flex">
+          Add to Cart
+          {
+            addingToCart && 
+            <svg className={`animate-spin ml-2 h-5 w-5 text-white`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+          }
+        </div>
+      </button>
+    </div>
+    <AddToCartModal
+      openModal={openModal}
+      setOpenModal={setOpenModal}
+      products={selectedProducts}
+    />
   </div>
 }
