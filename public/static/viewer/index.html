@@ -33,7 +33,8 @@
       let camera, scene, renderer;
       let isInitialised = false;
       let items = [
-        'Body'
+        'Body',
+        'Male_Hair_1_1',
       ];
       let wardrobeItems = [];
       const meshes = {};
@@ -61,7 +62,6 @@
         wardrobeItems = searchParams.get('wardrobeItems')?.split(',') || [];
 
         const baseItems = [
-          'Male_Hair_1_1',
           'Male_Loafers_Redsocks',
           'Male_Pants_WhiteGray',
         ];
@@ -158,6 +158,16 @@
                     }
                   });
                   meshes[item] = gltf.scene;
+                  if (
+                    item === 'Male_Hair_1_1' ||
+                    item === 'Male_Hair_1_2' ||
+                    item === 'Male_Hair_1_3' ||
+                    item === 'Male_Hair_1_4' ||
+                    item === 'Male_Hair_1_5' ||
+                    item === 'Male_Hair_1_6'
+                  ){
+                    meshes[item].scale.set(0.01, 0.01, 0.01);
+                  }
                   if (wardrobeItems.includes(item)) {
                     meshes[item].visible = false;
                   }
