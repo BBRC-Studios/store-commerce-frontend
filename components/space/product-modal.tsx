@@ -25,7 +25,7 @@ export default function ProductModal({
       <Modal.Body>
         <div className="flex flex-row">
           <div className="flex flex-1 pr-5">
-            <Carousel>
+            <Carousel style={{ height: 600 }}>
               {
                 product.images.map((image) => {
                   return <img key={image.url} alt={image.altText} src={image.url} />
