@@ -1,3 +1,4 @@
+import { STATIC_VIEWER } from 'lib/constants';
 import { Product } from 'lib/shopify/types';
 import Iframe from 'react-iframe';
 export default function Wardrobe({
@@ -9,7 +10,7 @@ export default function Wardrobe({
   return slug
     ?
     <Iframe
-      url={`/static/viewer/index.html?wardrobeItems=${slug}`}
+      url={`${STATIC_VIEWER}?wardrobeItems=${slug}`}
       width="100%"
       height="450px"
       display="block"

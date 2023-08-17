@@ -1,5 +1,7 @@
 'use client';
 
+import { STATIC_VIEWER } from "lib/constants";
+
 // eslint-disable-next-line @next/next/no-async-client-component
 export default function WardrobeIframe({
   items,
@@ -14,7 +16,7 @@ export default function WardrobeIframe({
   return <div className="flex relative aspect-square bg-white">
     <iframe
       id="wardrobe"
-      src={`/static/viewer/index.html?wardrobeItems=${items.join(',')}`}
+      src={`${STATIC_VIEWER}?wardrobeItems=${items.join(',')}`}
       style={{width: '100%', height: '100%'}} 
       allow="fullscreen"
     />
