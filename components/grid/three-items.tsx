@@ -37,6 +37,8 @@ export async function ThreeItemGrid() {
   return (
     <section className="mx-auto grid max-w-screen-2xl gap-4 px-4 pb-4 lg:grid-cols-4 lg:grid-rows-2">
       {homepageItems[0] && <ProductCard product={homepageItems[0]} />}
+      {homepageItems[1] && <ProductCard product={homepageItems[1]} />}
+      {homepageItems[2] && <ProductCard product={homepageItems[2]} />}
       {/*
       {homepageItems[0] && <ThreeItemGridItem size="full" item={homepageItems[0]} />}
       {homepageItems[1] && <ThreeItemGridItem size="half" item={homepageItems[1]} />}
