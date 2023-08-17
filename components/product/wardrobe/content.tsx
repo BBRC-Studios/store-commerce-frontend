@@ -2,7 +2,7 @@
 
 import { Center, OrbitControls, Plane } from '@react-three/drei';
 import { useEffect, useState } from 'react';
-import ModelBody from '../../../assets/models/Body';
+// import ModelBody from '../../../assets/models/Body';
 
 type ItemModel = {
   id: string;
@@ -75,7 +75,9 @@ export default function WardrobeContent() {
         return <Item.Model key={Item.id} position-y={-180} castShadow visible={enabled} />;
       })}
 
+      {/*
       <ModelBody position-y={-180} position-x={0} castShadow visible={enabled} />
+    */}
 
       <Plane
         args={[1000, 1000]}

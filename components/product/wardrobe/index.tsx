@@ -5,16 +5,21 @@ export default function Wardrobe({
 }: {
   product: Product
 }) {
-  console.log(product)
-  return (
+  const slug = product.modelviewerSlug?.value 
+  return slug
+    ?
     <Iframe
-      url="/static/viewer/index.html?wardrobeItems=Male_RugbyPoloShirt_PinkGreen"
+      url={`/static/viewer/index.html?wardrobeItems=${slug}`}
       width="100%"
       height="450px"
-      id=""
-      className=""
       display="block"
       position="relative"
     />
-  );
+    :
+    <div className="w-full pr-10" style={{ height: 450 }}>
+      <div className="flex flex-col justify-center items-center h-full">
+        <div className="text-2xl font-bold">No 3D Model Available</div>
+        <div className="text-xl">Please select a different product</div>
+      </div>
+    </div>
 }
