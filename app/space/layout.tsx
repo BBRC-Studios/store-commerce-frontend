@@ -5,7 +5,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <Suspense>
       <div className="w-full">
-        <div className="mx-8 py-20 sm:mx-auto w-full">
+        <div className="pt-5 pb-10 sm:mx-auto w-full">
           <Suspense>{children}</Suspense>
         </div>
       </div>

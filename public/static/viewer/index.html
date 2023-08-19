@@ -38,13 +38,13 @@
       ];
       let wardrobeItems = [];
       const meshes = {};
+      const manager = new THREE.LoadingManager();
 
       function initialiseListeners() {
         window.addEventListener(
           "message",
           (event) => {
             if (event.data.type === 'toggle-visibility'){
-              console.log(event)
               Object.keys(event.data.visibility).forEach((slug) => {
                 meshes[slug].visible = event.data.visibility[slug];
               })
@@ -139,7 +139,7 @@
         dracoLoader.setDecoderConfig({ type: 'js' });
 
         const group = new THREE.Group();
-        const loader = new GLTFLoader().setPath('../../glb/');
+        const loader = new GLTFLoader(manager).setPath('../../glb/');
         loader.setDRACOLoader(dracoLoader);
 
         addRunwayToScene();
@@ -151,12 +151,6 @@
               loader.load(
                 `${item}.glb`,
                 (gltf) => {
-                  gltf.scene.traverse(function (node) {
-                    if (node.isMesh) {
-                      node.castShadow = true;
-                      node.geometry.computeVertexNormals(); // FIX
-                    }
-                  });
                   meshes[item] = gltf.scene;
                   if (
                     item === 'Male_Hair_1_1' ||
@@ -170,6 +164,13 @@
                   }
                   if (wardrobeItems.includes(item)) {
                     meshes[item].visible = false;
+                    meshes[item].traverse(function (node) {
+                      if (node.isMesh) {
+                        node.castShadow = true;
+                        node.geometry.computeVertexNormals(); // FIX
+                        node.material.metalness = 0;
+                      }
+                    });
                   }
                   group.add(meshes[item]);
                   resolve();
@@ -191,12 +192,28 @@
         });
       }
 
+      async function initialiseLoadingManager() {
+        const progressBar = document.getElementById('progress-bar');
+        const progress = document.getElementById('progress');
+
+        manager.onProgress = function ( item, loaded, total ) {
+          progress.innerHTML = (loaded / total * 100).toFixed(0) + '%';
+
+          if (loaded === total) {
+            progressBar.style.opacity = 0;
+            setTimeout(() => {
+              progressBar.style.display = 'none';
+            },2000)
+          }
+        };
+      }
+
       async function init() {
+        await initialiseLoadingManager() 
         await initialiseFromSearchParams();
         initialiseListeners();
 
-        const container = document.createElement('div');
-        document.body.appendChild(container);
+        const container = document.getElementById('container')
 
         camera = new THREE.PerspectiveCamera(22, window.innerWidth / window.innerHeight, 2, 40);
         camera.position.set(50, 0, 700);
@@ -219,7 +236,7 @@
 
         await loadModels();
 
-        renderer.setPixelRatio(window.devicePixelRatio * 0.8);
+        renderer.setPixelRatio(window.devicePixelRatio * 0.9);
         renderer.setSize(window.innerWidth, window.innerHeight);
 
         renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -231,7 +248,7 @@
 
         const controls = new OrbitControls(camera, renderer.domElement);
         controls.addEventListener('change', render); // use if there is no animation loop
-        controls.minDistance = 5;
+        controls.minDistance = 4;
         controls.maxDistance = 10;
         controls.target.set(0, 0.05, 0.05);
         controls.minPolarAngle = Math.PI / 2;
@@ -245,5 +262,13 @@
 
       init();
     </script>
+
+    <div id="progress-bar" style="transition: opacity 2s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: absolute; display: flex; background-color: white; width: 100%; height: 100%; z-index: 100;justify-content: center; align-items: center; ">
+      <div style="display: flex; color: black; flex-direction: column; text-align: center">
+        <h2 id="progress" style="margin: 0">0%</h2>
+        <h2>Loading</h2>
+      </div>
+    </div>
+    <div id="container"></div>
   </body>
 </html>
