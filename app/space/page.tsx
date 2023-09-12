@@ -37,11 +37,11 @@ export default async function SpacePage() {
   if (!products) return notFound();
 
   return (
-      <div className="mx-auto max-w-screen-2xl px-4 w-full">
+      <div className="mx-auto px-20 w-full">
         <div className="rounded-lg border border-neutral-200 bg-white dark:border-neutral-800 dark:bg-black">
           <div className="grid grid-cols-2">
             <WardrobeIframe items={productModelViewerSlugs} />
-            <div className="px-6 py-6">
+            <div className="px-6 py-3">
               <ProductItems products={products} />
             </div>
           </div>

@@ -15,26 +15,26 @@ export default function ProductItems({
 }: {
   products: Product[];
 }) {
-  const defaultSelectedItems: Record<string, boolean> = {}
+  const defaultItems: Record<string, boolean> = {}
   
   products.forEach((product, index) => {
+    products[index].category = product?.modelviewerCategory?.value ? String(JSON.parse(product.modelviewerCategory.value)[0]) : 'Others'
     if (product?.modelviewerSlug?.value) {
-      defaultSelectedItems[product.modelviewerSlug.value] = false
+      defaultItems[product.modelviewerSlug.value] = false
     }
-    products[index].category = product?.modelviewerCategory?.value ? JSON.parse(product.modelviewerCategory.value)[0] : 'Others'
   })
 
   const categorisedProducts = _.groupBy(products, (product: Product) => {
     return product.category
   });
   
-  const [selectedItems, setSelectedItems] = useState(defaultSelectedItems);
+  const [items, setItems] = useState(defaultItems);
   const [selectedProducts, setSelectedProducts] = useState<Product[]>([]);
   const [openModal, setOpenModal] = useState<boolean>(false);
 
   const toggleAddToCartModal = () => {
     setSelectedProducts(products.filter(product => {
-      return selectedItems[product.modelviewerSlug?.value!]
+      return items[product.modelviewerSlug?.value!]
     }))
 
     setOpenModal(true);
@@ -42,20 +42,20 @@ export default function ProductItems({
 
   const updateSelected = (product: Product) => {
     if (product.modelviewerSlug?.value) {
-      const newSelectedItems = {...selectedItems}
+      const newItems = {...items}
 
       // Set all products in that product category to false
-      Object.keys(newSelectedItems).forEach(key => {
+      Object.keys(newItems).forEach(key => {
         categorisedProducts[product.category!].find((_product: Product) => {
           if (_product.modelviewerSlug!.value === key) {
-            newSelectedItems[key] = product.modelviewerSlug!.value === key
+            newItems[key] = product.modelviewerSlug!.value === key
           }
         });
       })
 
       // Set selected items
-      setSelectedItems({
-        ...newSelectedItems
+      setItems({
+        ...newItems
       })
     }
   }
@@ -64,9 +64,9 @@ export default function ProductItems({
     const iframe = document.getElementById('wardrobe') as HTMLIFrameElement;
     iframe.contentWindow?.postMessage({
       type: 'toggle-visibility',
-      visibility: selectedItems
+      visibility: items
     }, '*');
-  }, [selectedItems])
+  }, [items])
   
   return <div className="flex flex-col h-full justify-between">
     <div className="flex">
