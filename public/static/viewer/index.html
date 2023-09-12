@@ -158,6 +158,20 @@
                     }
                   });
                   meshes[item] = gltf.scene;
+                  
+                  if (
+                    [
+                    'Male_Hair_1_1',
+                    'Male_Hair_1_2',
+                    'Male_Hair_1_3',
+                    'Male_Hair_1_4',
+                    'Male_Hair_1_5',
+                    'Male_Hair_1_6',
+                    'Male_BomberJacket_Green'
+                    ].includes(item)
+                  ){
+                    meshes[item].scale.set(0.01, 0.01, 0.01);
+                  }
                   if (wardrobeItems.includes(item)) {
                     meshes[item].visible = false;
                   }

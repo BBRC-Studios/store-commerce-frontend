@@ -1,5 +1,6 @@
 'use client';
 
+import { Tabs } from 'flowbite-react';
 import { Product } from 'lib/shopify/types';
 import _ from "lodash";
 import { useEffect, useState } from 'react';
@@ -69,27 +70,31 @@ export default function ProductItems({
   
   return <div className="flex flex-col h-full justify-between">
     <div className="flex">
-    {
-      Object.keys(categorisedProducts).map(category => {
-        return <div key={category}>
-          <div className="flex pb-3">
-            <h1 className="text-2xl font-bold">{category}</h1>
-          </div>
-          <div className="flex w-full">
-            <div className="grid grid-cols-4 gap-4">
-            {
-              products.map(product => <ProductItem
-                key={product.id}
-                product={product}
-                selected={product.modelviewerSlug?.value ? selectedItems[product.modelviewerSlug?.value] : false}
-                onSelected={() => updateSelected(product)}
-              />)
-            }
+      <Tabs.Group
+        style="underline"
+      >
+      {
+        Object.keys(categorisedProducts).map(category => {
+          return <Tabs.Item
+            key={category}
+            title={<h1 className="text-xl font-bold">{category}</h1>}
+          >
+            <div className="flex w-full">
+              <div className="grid grid-cols-5 gap-3">
+              {
+                categorisedProducts[category].map(product => <ProductItem
+                  key={product.id}
+                  product={product}
+                  selected={product.modelviewerSlug?.value ? selectedItems[product.modelviewerSlug?.value] : false}
+                  onSelected={() => updateSelected(product)}
+                />)
+              }
+              </div>
             </div>
-          </div>
-        </div>
+          </Tabs.Item>
       })
     }
+    </Tabs.Group>
     </div>
     <div className="flex flex-col">
       <button 
