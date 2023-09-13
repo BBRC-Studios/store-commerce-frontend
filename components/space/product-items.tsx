@@ -85,7 +85,7 @@ export default function ProductItems({
                 categorisedProducts[category].map(product => <ProductItem
                   key={product.id}
                   product={product}
-                  selected={product.modelviewerSlug?.value ? selectedItems[product.modelviewerSlug?.value] : false}
+                  selected={product.modelviewerSlug?.value ? items[product.modelviewerSlug?.value] : false}
                   onSelected={() => updateSelected(product)}
                 />)
               }

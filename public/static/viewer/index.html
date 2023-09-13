@@ -37,6 +37,7 @@
         'Male_Hair_1_1',
       ];
       let wardrobeItems = [];
+      let orbit = {}
       const meshes = {};
       const manager = new THREE.LoadingManager();
 
@@ -60,6 +61,12 @@
 
         // Gets the wardrobe items
         wardrobeItems = searchParams.get('wardrobeItems')?.split(',') || [];
+
+        // Gets the orbit options
+        orbit = {
+          minDistance: searchParams.get('minDistance') || 4,
+          maxDistance: searchParams.get('maxDistance') || 10,
+        }
 
         const baseItems = [
           'Male_Loafers_Redsocks',
@@ -118,18 +125,18 @@
       }
 
       function addRunwayToScene() {
-        const geometry = new THREE.PlaneGeometry(100, 100);
-        const material = new THREE.MeshStandardMaterial({
-          color: 0xffffff,
-          side: THREE.DoubleSide
-        });
-        const plane = new THREE.Mesh(geometry, material);
-        plane.rotateX(Math.PI / 2);
-        plane.translateZ(1.56);
-        plane.castShadow = true;
-        plane.receiveShadow = true;
+        const horizontalPlane = new THREE.Mesh(
+          new THREE.PlaneGeometry(100, 100),
+          new THREE.MeshStandardMaterial({
+            color: 0xf6f6f6
+          })
+        );
+        horizontalPlane.rotateX(Math.PI / 2);
+        horizontalPlane.translateZ(1.56);
+        horizontalPlane.castShadow = true;
+        horizontalPlane.receiveShadow = true;
 
-        scene.add(plane);
+        scene.add(horizontalPlane);
       }
 
       async function loadModels() {
@@ -153,12 +160,20 @@
                 (gltf) => {
                   meshes[item] = gltf.scene;
                   if (
-                    item === 'Male_Hair_1_1' ||
-                    item === 'Male_Hair_1_2' ||
-                    item === 'Male_Hair_1_3' ||
-                    item === 'Male_Hair_1_4' ||
-                    item === 'Male_Hair_1_5' ||
-                    item === 'Male_Hair_1_6'
+                    item === 'Body'
+                  ){
+                    meshes[item].translateZ(-0.001)
+                  }
+                  if (
+                    [
+                      'Male_Hair_1_1',
+                      'Male_Hair_1_2',
+                      'Male_Hair_1_3',
+                      'Male_Hair_1_4',
+                      'Male_Hair_1_5',
+                      'Male_Hair_1_6',
+                      // 'Male_RugbyPoloShirt_PinkGreen',
+                    ].includes(item)
                   ){
                     meshes[item].scale.set(0.01, 0.01, 0.01);
                   }
@@ -230,9 +245,9 @@
         );
         envMap.mapping = THREE.EquirectangularReflectionMapping;
 
-        scene.background = envMap;
+        // scene.background = envMap;
         scene.environment = envMap;
-        scene.backgroundBlurriness = 0.7;
+        scene.background = new THREE.Color(0xf6f6f6);
 
         await loadModels();
 
@@ -248,8 +263,8 @@
 
         const controls = new OrbitControls(camera, renderer.domElement);
         controls.addEventListener('change', render); // use if there is no animation loop
-        controls.minDistance = 4;
-        controls.maxDistance = 10;
+        controls.minDistance = orbit.minDistance;
+        controls.maxDistance = orbit.maxDistance;
         controls.target.set(0, 0.05, 0.05);
         controls.minPolarAngle = Math.PI / 2;
         controls.maxPolarAngle = Math.PI / 2;
@@ -263,12 +278,12 @@
       init();
     </script>
 
-    <div id="progress-bar" style="transition: opacity 2s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: absolute; display: flex; background-color: white; width: 100%; height: 100%; z-index: 100;justify-content: center; align-items: center; ">
+    <div id="progress-bar" style="transition: opacity 2s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: absolute; display: flex; background-color:#f6f6f6; width: 100%; height: 100%; z-index: 100;justify-content: center; align-items: center;">
       <div style="display: flex; color: black; flex-direction: column; text-align: center">
         <h2 id="progress" style="margin: 0">0%</h2>
         <h2>Loading</h2>
       </div>
     </div>
-    <div id="container"></div>
+    <div id="container" style="border: 1px solid #f6f6f6"></div>
   </body>
 </html>
